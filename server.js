@@ -26,6 +26,16 @@ app.post('/add-creds', (req, res) => {
   });
 });
 
+app.get('/get-creds', (req, res) => {
+  fs.readFile(CREDS_FILE, (err, data) => {
+    if (err) {
+      return res.status(500).send('Error reading credentials file.');
+    }
+    const credsList = JSON.parse(data || '[]');
+    res.status(200).json(credsList);
+  });
+});
+
 app.listen(5000, () => {
   console.log('Server is running on port 5000');
 });
