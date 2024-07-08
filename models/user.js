@@ -1,5 +1,16 @@
 const mongoose = require('mongoose');
 
+const HistorySchema = new mongoose.Schema({
+  status: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -22,6 +33,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  history: [HistorySchema],
 },{ timestamps: true });
 
 module.exports = mongoose.model('User', UserSchema);

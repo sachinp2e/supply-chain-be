@@ -64,4 +64,49 @@ router.post("/add-participant", async (req, res) => {
   }
 });
 
+// @route    POST api/users/:id/history
+// @desc     Add history to a user
+// @access   Public
+router.post('/:sku/history', async (req, res) => {
+    const { status } = req.body;
+  
+    try {
+      let user = await User.findOne({sku:req.params.sku});
+  
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found' });
+      }
+  
+      const newHistory = {
+        status,
+      };
+  
+      user.history.push(newHistory);
+  
+      await user.save();
+  
+      res.json(user.history);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  });
+
+
+router.get('/:sku/user-history', async (req, res) => {
+  
+    try {
+      let user = await User.findOne({sku:req.params.sku});
+  
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found' });
+      }
+      user.history.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      res.json(user.history);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  });
+
 module.exports = router;

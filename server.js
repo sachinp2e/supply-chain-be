@@ -13,6 +13,7 @@ connectDB();
 app.use(bodyParser.json());
 app.use(cors());
 app.use("/users", require("./routes/users"));
+app.use("/bunch", require("./routes/bunch"));
 const CREDS_FILE = "./creds.json";
 
 app.get('/', (req, res) => res.send('API Running'));
