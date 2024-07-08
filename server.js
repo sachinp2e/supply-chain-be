@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use("/users", require("./routes/users"));
 app.use("/bunch", require("./routes/bunch"));
+app.use("/assets", require("./routes/assets"));
 const CREDS_FILE = "./creds.json";
 
 app.get('/', (req, res) => res.send('API Running'));

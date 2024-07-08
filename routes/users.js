@@ -94,7 +94,6 @@ router.post('/:sku/history', async (req, res) => {
 
 
 router.get('/:sku/user-history', async (req, res) => {
-  
     try {
       let user = await User.findOne({sku:req.params.sku});
   
