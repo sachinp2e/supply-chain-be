@@ -11,7 +11,7 @@ router.post("/add-history", async (req, res) => {
 
   try {
     const response = await axios.post(
-      "https://dev-ks-testnet.p2eppl.com/v1/contract/query/ZP6jL8cuzpbEqBsiOQBrU10o8NKxkuN61720248529721/QueryAsset",
+      "https://dev-ks-testnet.p2eppl.com/v1/contract/query/ozPesDiTGBfusswVZLBIIW63Jt6FZ2Un1720340266385/QueryAsset",
       {
         invokerId: "53B67963FD7EF602108516506AEC34A500B5534E",
         args: {

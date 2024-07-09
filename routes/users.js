@@ -16,7 +16,6 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign({...user}, "secret", { expiresIn: 60 * 60 });
-    console.log("🚀 ~ router.post ~ token:", token)
     res.json({user:user,access_token:token});
   } catch (err) {
     console.error(err.message);
@@ -27,7 +26,8 @@ router.post("/login", async (req, res) => {
 router.get("/get-all-users", async (req, res) => {
   try {
     const users = await User.find();
-    res.json(users);
+    const temp = users.filter((user)=> user.role !== "admin")
+    res.json(temp);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
