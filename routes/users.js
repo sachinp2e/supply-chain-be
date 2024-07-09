@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 var jwt = require("jsonwebtoken");
-const { access } = require("fs");
+const crypto = require("crypto");
 
 // @route    GET api/users
 // @desc     Get all users
@@ -15,8 +15,8 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    const token = jwt.sign({...user}, "secret", { expiresIn: 60 * 60 });
-    res.json({user:user,access_token:token});
+    const token = jwt.sign({ ...user }, "secret", { expiresIn: 60 * 60 });
+    res.json({ user: user, access_token: token });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
@@ -26,7 +26,7 @@ router.post("/login", async (req, res) => {
 router.get("/get-all-users", async (req, res) => {
   try {
     const users = await User.find();
-    const temp = users.filter((user)=> user.role !== "admin")
+    const temp = users.filter((user) => user.role !== "admin");
     res.json(temp);
   } catch (err) {
     console.error(err.message);
@@ -42,7 +42,8 @@ router.post("/add-participant", async (req, res) => {
 
   try {
     let user = await User.findOne({ name });
-
+    const randomBytes = crypto.randomBytes(20);
+    const walletAddress = "0x" + randomBytes.toString("hex");
     if (user) {
       return res.status(400).json({ msg: "User already exists" });
     }
@@ -53,6 +54,7 @@ router.post("/add-participant", async (req, res) => {
       password,
       role,
       sku,
+      walletAddress,
     });
 
     await user.save();
@@ -67,45 +69,44 @@ router.post("/add-participant", async (req, res) => {
 // @route    POST api/users/:id/history
 // @desc     Add history to a user
 // @access   Public
-router.post('/:sku/history', async (req, res) => {
-    const { status } = req.body;
-  
-    try {
-      let user = await User.findOne({sku:req.params.sku});
-  
-      if (!user) {
-        return res.status(404).json({ msg: 'User not found' });
-      }
-  
-      const newHistory = {
-        status,
-      };
-  
-      user.history.push(newHistory);
-  
-      await user.save();
-  
-      res.json(user.history);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server error');
-    }
-  });
+router.post("/:sku/history", async (req, res) => {
+  const { status } = req.body;
 
+  try {
+    let user = await User.findOne({ sku: req.params.sku });
 
-router.get('/:sku/user-history', async (req, res) => {
-    try {
-      let user = await User.findOne({sku:req.params.sku});
-  
-      if (!user) {
-        return res.status(404).json({ msg: 'User not found' });
-      }
-      user.history.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      res.json(user.history);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server error');
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
     }
-  });
+
+    const newHistory = {
+      status,
+    };
+
+    user.history.push(newHistory);
+
+    await user.save();
+
+    res.json(user.history);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+router.get("/:sku/user-history", async (req, res) => {
+  try {
+    let user = await User.findOne({ sku: req.params.sku });
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    user.history.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    res.json(user.history);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
 
 module.exports = router;
